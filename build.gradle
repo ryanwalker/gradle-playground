@@ -31,8 +31,11 @@ dependencies {
 
 
 task hello {
-
     doLast {
         println "Hello World!"
     }
+}
+
+task helloAgain << {
+    println "Hello World AGAIN!"
 }
