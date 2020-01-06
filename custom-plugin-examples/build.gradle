@@ -1,0 +1,67 @@
+
+plugins {
+  id 'java'
+  id 'groovy'
+  id 'maven-publish'
+}
+
+group = 'com.kubra.gradle-plugins'
+version = '1.2-SNAPSHOT'
+
+def nexusRepository = "https://nexus.ifactornotifi.com/repository"
+
+repositories { mavenCentral() }
+
+dependencies {
+  implementation gradleApi()
+  implementation localGroovy()
+  implementation 'com.diffplug.spotless:spotless-plugin-gradle:3.27.0'
+  implementation 'org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.8'
+}
+
+
+publishing {
+  repositories {
+    mavenLocal()
+    maven {
+      def releasesRepository = "$nexusRepository/releases/"
+      def snapshotsRepository = "$nexusRepository/snapshots/"
+      url = version.endsWith('SNAPSHOT') ? snapshotsRepository : releasesRepository
+      credentials {
+        username = "${nexusUsername}"
+        password = "${nexusPassword}"
+      }
+    }
+  }
+
+  publications {
+    mavenJava(MavenPublication) {
+      artifactId = "$project.name"
+
+      from components.java
+
+      pom {
+        name = "Kubra Common Plugins Plugin"
+        description = "Applies common plugins to gradle projects, e.g. spotlessJava, sonarqube."
+        url = "https://kubra.com"
+        developers {
+          developer {
+            id = 'ryanwalker'
+            name = 'Ryan Walker'
+            email = 'ryan.walker@kubra.com'
+          }
+          developer {
+            id = 'john-holly'
+            name = 'John Holly'
+            email = 'john.holly@kubra.com'
+          }
+          developer {
+            id = 'brian-castellanos'
+            name = 'Brian Castellanos'
+            email = 'brian.castellanos@kubra.com'
+          }
+        }
+      }
+    }
+  }
+}
